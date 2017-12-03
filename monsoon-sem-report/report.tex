@@ -9,6 +9,21 @@
 \usepackage[sorting=none, style=ieee]{biblatex}
 \addbibresource{citations.bib}
 
+\usepackage{color}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue},
+  frame=tb,
+  breaklines=true,
+  showstringspaces=false,
+%   columns=flexible,
+  numbers=none,
+  tabsize=3
+}
+
+
 \begin{document}
 \renewcommand\bibname{References} %Renames "Bibliography" to "References" on ref page
 
@@ -20,11 +35,11 @@
 \pagenumbering{roman} %numbering before main content starts
 \tableofcontents
 \listoffigures
-
+\lstlistoflistings
 \newpage
 \pagenumbering{arabic} %reset numbering to normal for the main content
 
-% \input{./prob-definition.tex} %objective changed to problem definition
+\input{./prob-definition.tex} %objective changed to problem definition
 \input{./introduction.tex} %literature survey included in this
 \input{./work-done.tex}
 \input{./future-work.tex}

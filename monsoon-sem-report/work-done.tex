@@ -1,11 +1,77 @@
 \chapter{Work Done}
 
 \section{Study of Various Rooting Methods}
+To fully customize and enjoy the power of underlying Linux kernel, many Android users voluntarily "root" their devices. Rooting is the process of allowing device users to attain a persistent privileged access to the device. The general way to gain root access is to exploit one or other Android system vulnerability and then install a custom su binary (known as "super user") that allows any application on the android device to perform operations that require additional superuser privileges, as root. We discuss various commonly used methods to root Android devices below.
 
+\subsection{Fastboot Mode}
+Fastboot is a special diagnostic and engineering protocol\cite{ADBFastb81:online} that users can boot their Android device into. In fastboot mode, users can modify the file system image from a computer over a USB connection.\cite{Whatisfa82:online}. The fastboot mode is not available on every device. The devices with unlockable bootloaders typically support the fastboot\cite{fastboot} mode. The fastboot mode can be used to unlock the bootloader on devices. For obvious security reasons, unlocking the bootloader will reset the device to the factory state to ensure that malicious OS images cannot get access to existing user data. Once the bootloader is unlocked, there are several ways to install the "su" binary.
+
+As mentioned earlier, the de-facto way of rooting a device is to install the su binary in the /system partition. After unlocking bootloader, it is straightforward to flash a custom system image that has the su binary installed on it. Alternatively, the user can pull the system image from the device, install su binary, then flash the modified system image back to the device.
+
+One other way is to use a custom boot image. A boot image in Android contains the kernel and RAMDisk\cite{initrd}, critical files which are necessary to initiate the boot process before the file system is mounted. The RAM disk is a small partition image that contains a root file system (rootfs) that is mounted read-only by the kernel at the boot time. It contains /init and a few configuration files. It is used to start the init process which will mount the rest of the system correctly and run the init procedure\cite{ramdisk}. By creating a boot image that contains customized commands and scripts, one can mount system as writable as install the su binary in it, or even flash custom system images, by booting the device from a custom boot image.
+
+Flashing a custom recovery image is also one way to root the device if the bootloader is unlocked. Since the recovery OS is stored in a partition, device users can replace it with a custom recovery OS image, and get temporary root access.
+
+\subsection{Rooting apps and PC tools}
+This method is most useful for the devices which do not have an unlockable bootloader. On such devices, root access can be obtained by exploiting a system or kernel vulnerability. Many popular one-click rooting tools exploit one or more vulnerabilities found in the kernel, device drivers, or system services and daemons to install su for a persistent root access.
+
+\subsection{Privileged ADB}
+The user id under which the ADB shell runs on the device depends on the value of system property ro.secure. If ro.secure is 0, then the shell will run as root, otherwise, if ro.secure is set to 1 (secure mode), it will run as a regular non-privileged user. The value of this property is set at boot time, based on the default.prop file located in the boot partition. By manipulating boot image, one can make the ADB run as root and then enable root access via shell. Many device manufacturers and Android engineering build, do not set the value of ro.secure to secure mode, which allows the user to have an adb shell that can execute any program as root. With an adb root shell, one can easily upload su and its installation script to the device and execute it from there to get root access. 
+
+\subsection{Systemless Root}
+Since Android 4.3, the "su" daemon - the process that handles the requests for root access - has to run at startup and enough permissions to perform the tasks. It can be done by modifying the system partition as explained earlier. However, since Android Lollipop, there was no way to start the "su" daemon at startup. So developers started using a modified boot image - this is effectively called systemless root\cite{systemlessroot}, named such because it does not modify any files in the system partition.
+
+A backdoor was later found to modify the system partition on Lollipop, but on devices running Marshmallow, this is the default method to root. This method does not work on devices with a locked bootloader.
 
 \section{Various Rooting Detection Methods}
+Rooted android devices are very prevalent. According to a recent Google's Android Security report \cite{GoogleAn32:online}, in 2016, user intended rooting app installs consists of 0.3461\% of all the installations, while the malicious rooting app installs consists of  0.00233\% of all installs. In China, 80\% of cheap Android phones are shipped with customized system images that allow root access by default.\cite{80ChinaS47:online}
+    
+Due to the increasing number of rooted phones whether user-done or malicious, many third-party app developers have started putting various rooting detection methods in their apps so that the app will not function whenever it detects that the phone is rooted.
 
-\section{Google's Increasing influence over the Android}
+Following are some of the methods that can be used to check for the presence of root on a device.
 
-
-
+\subsection{Root Management Packages}
+Some applications are commonly installed when the device is rooted. Some of these are SuperSU.apk, applications that require root for their functioning like Titanium Backup, Root Cloakers (apps those hide device's root status), among others. The presence of these apps and packages can be considered a signal that the device is rooted.    
+    
+\subsection{Check for Installed files}
+    The following files are checked by various root checkers apps.
+    \begin{itemize}
+        \item /system/xbin/su, /system/bin/su, /system/su
+        \item /system/xbin/busybox and all symbolic links of commands created by busybox
+        \item The files related to popular root packages
+    \end{itemize}
+    
+\subsection{Directory Permissions}
+    Sometimes rooting a device changes permissions on common directories. Some rooting tools make some folders readable or writable by any process. For example, /data directory contains all the installed applications files. By default, it is not readable. So its permissions can be checked to find any alterations.
+    
+\subsection{Using Shell Commands}
+    Android Debug Shell (ADB) commands are commonly used to identify any root traits in the devices. Some of the commands are listed.
+    \begin{itemize}
+        \item \textbf{su}: If the su binary exists, the shell command will exit without error. After su, the id command can be executed to check if the current user has a uid of 0.
+        
+        \begin{lstlisting}[language=bash,caption={The su process is given uid 0}, captionpos=b, label=listing:sparql_getallindividuals,
+   basicstyle=\ttfamily]
+shell@android:/ $ su 
+root@android:/ # id
+uid=0(root) gid=0(root)
+        \end{lstlisting}
+        
+        \item \textbf{Busybox}: Busybox is installed when a device is rooted, to add additional UNIX-like functionality to Android. Busysbox is a binary that provides many standard Linux utilities. So its existence is a good indicator that the device has been rooted.
+        
+        \begin{lstlisting}[language=bash,basicstyle=\tiny,caption={The busybox binary in system folder (omitting timestamp)}, captionpos=b, label=listing:sparql_getallindividuals,
+   basicstyle=\ttfamily]
+root@android:/ # ls -la /system/xbin/busybox
+-rwxr-xr-x root system  0 2017-10-03 busybox
+        \end{lstlisting}
+        
+        \item \textbf{Check System Properties}: The value of ro.secure can also be checked to find if the adb shell is running as root.
+        \begin{lstlisting}[language=bash,caption={The value 1 means that the shell runs in secure mode}, captionpos=b, label=listing:sparql_getallindividuals,
+   basicstyle=\ttfamily]
+root@android:/ $ getprop ro.secure            
+1
+    \end{lstlisting}
+    \end{itemize}
+    
+        
+% \section{Google and Android}
+    
