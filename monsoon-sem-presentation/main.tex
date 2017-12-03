@@ -1,0 +1,257 @@
+\documentclass{beamer}
+% \usetheme{seahorse}
+\usecolortheme{rose}
+\useoutertheme{infolines}
+
+% \usecolortheme[snowy]{owl}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{totcount}
+
+% \regtotcounter{section}
+\usepackage{multido}
+\usepackage{xspace}
+
+\setbeamertemplate{navigation symbols}{}
+\newcommand{\credit}[1]{\par\footnotesize{Image Courtesy}:~\itshape#1}
+
+% \setbeamerfont{title}{shape=\itshape,family=\rmfamily}
+% \setbeamercolor{title}{fg=red!80!black}
+\setbeamercolor{title}{fg=red}
+\setbeamercolor{subtitle}{fg=blue}
+
+\setbeamertemplate{frametitle}[default][center]
+\setbeamercolor{frametitle}{fg=red}
+\setbeamertemplate{frametitle continuation}{}
+\setbeamertemplate{bibliography item}[triangle]
+
+
+\title{Increasing Security in Android \&\\the Future of Rooting}
+\subtitle{CS4089 Project} 
+\titlegraphic{\includegraphics[height=2.5cm]{logo.png}}
+\date{\today}
+\author[Yash Agarwal]{Yash Agarwal \texorpdfstring{\\ \vskip0.3em\small{(B140526CS)}}{}}
+\institute[CSED, NIT Calicut]{Department of Computer Science and Engineering\\National Institute of Technology, Calicut}
+
+\begin{document}
+
+\setbeamertemplate{subsection in toc}{%
+\leavevmode\leftskip=5.65ex%
+  \llap{\raisebox{0.2ex}{\textcolor{structure}{$\blacktriangleright$}}\kern1ex}%
+  \inserttocsubsection\par%
+}
+
+\setbeamertemplate{headline}
+{
+    \leavevmode%
+    \hbox{%
+        \begin{beamercolorbox}[wd=.15\paperwidth,leftskip=.15mm,ht=2.25ex,dp=1ex]{date in head/foot}%
+            \usebeamerfont{date in head/foot}\insertshortdate{}
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=.70\paperwidth,ht=2.25ex,dp=1ex,center]{section in head/foot}%
+            \usebeamerfont{section in head/foot}\textbf{\insertshorttitle : \insertsectionhead}
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=.15\paperwidth,ht=2.25ex,dp=1ex,right]{page in head/foot}%
+            \usebeamerfont{page in head/foot}
+            \insertframenumber{}/\inserttotalframenumber\hspace*{2ex} 
+        \end{beamercolorbox}}%
+        \vskip1pt%
+}
+
+\setbeamertemplate{footline}
+{
+    \leavevmode%
+    \hbox{%
+        \begin{beamercolorbox}[wd=.50\paperwidth,leftskip=.3cm,ht=2.25ex,dp=1ex,center]{date in head/foot}%
+            \usebeamerfont{date in head/foot}\textbf{\insertshortauthor}
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=.50\paperwidth,rightskip=.3cm plus1fil,ht=2.25ex,dp=1ex,center]{frame in head/foot}%
+            \usebeamerfont{frame in head/foot}\textbf{\insertshortinstitute}
+        \end{beamercolorbox}%
+    }       
+}
+
+\addtobeamertemplate{headline}{}{\rule{\paperwidth}{0.2mm}}
+\addtobeamertemplate{footline}{\rule{\paperwidth}{0.2mm}}{}
+
+{
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{}
+
+\begin{frame}[label=intro,noframenumbering,plain]
+     \vfill
+     \centering
+        
+    \begin{beamercolorbox}[sep=2pt,center,colsep=-4bp,rounded=true,shadow=true]{title}
+        \ifx\insertsubtitle\@empty%
+        \else%
+        
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      \fi%     
+        \vskip0.7em%
+        \usebeamerfont{title}\inserttitle\par%
+        
+     \end{beamercolorbox}%
+     
+     \vskip1em%
+     
+     \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp,rounded=true,shadow=true]{author}
+        \usebeamerfont{author}\insertauthor
+     \end{beamercolorbox}
+     
+     \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp,rounded=true,shadow=true]{institute}
+        \usebeamerfont{institute}\insertinstitute
+     \end{beamercolorbox}
+
+     {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+
+     \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp,rounded=true,shadow=true]{date}
+        \usebeamerfont{date}\small{\insertdate}
+     \end{beamercolorbox}\vskip0.5em
+
+    \end{frame}
+} 
+% \addtocounter{framenumber}{-1}
+
+\setbeamertemplate{section in toc}{\inserttocsectionnumber.~\inserttocsection}
+
+\AtBeginSection[]{
+  \begin{frame}[noframenumbering, plain]
+  \vfill
+  \centering
+  \setbeamercolor{title}{fg=black,bg=black!10!white}
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\section*{Outline}
+\begin{frame}[label=outline,noframenumbering,plain]{Outline}
+    \tableofcontents
+\end{frame}
+
+\section{Introduction}
+\begin{frame}[allowframebreaks]{Introduction}
+    \begin{itemize}
+        \item Android security model takes advantage of Linux kernel's advanced security features.
+        \item Android does not use UID to distinguish users but uses it to distinguish between the applications.
+        \item On App installation, Android creates a new UID and data directory for the app.
+        \item This directory is owned by the app UID only and the app process is run as UID as the user. 
+    \end{itemize}
+\end{frame}
+
+\subsection{Permissions in Android}
+\begin{frame}[allowframebreaks]{Permissions in Android}
+    \begin{itemize}
+        \item Android provides additional, fine-grained access rights to applications so that the applications can use the resources which are not owned by them.
+        \item The permissions act as a type of agreement between the user and the app developer.
+        \item These permissions can control access to device's hardware, network connectivity, and OS services.
+        \item Once these permissions are granted, they cannot be revoked, and they are made available to the application without any additional confirmation.
+    \end{itemize}
+\end{frame}
+
+\subsection{SELinux in Android}
+\begin{frame}[allowframebreaks]{Why is SELinux Required}
+    \begin{itemize}
+        \item Android Security Model ensures that each application's files are private but, nothing prevents an application from making its files world accessible
+        \item It is due to the default access control model employed by Linux, known as discretionary access control (DAC).
+        \item In DAC model, once a user gets access to a particular resource, they can pass it on to another user at their discretion.
+    \end{itemize}
+    \framebreak
+    \begin{itemize}
+        \item In Mandatory Access Control (MAC) model, a system-wide set of authorized rules called policy are used. 
+        \item MAC ensures that each access to resources conforms to these policies. 
+        \item The policy rules can only be changed by an administrator, and users cannot bypass or override it.
+    \end{itemize}
+\end{frame}
+
+\section{Study of Various Rooting Methods}
+\begin{frame}{Study of Various Rooting Methods}
+    \begin{itemize}
+        \item Rooting is the process of allowing device users to attain a persistent privileged access to the device.
+        \item Rooitng involves installing a custom su binary (known as "super user").
+        \item This allows any application on the android device to perform operations that require additional superuser privileges, as root.
+    \end{itemize}
+\end{frame}
+
+\subsection{FastBoot Mode}
+\begin{frame}{FastBoot Mode}
+    \begin{itemize}
+        \item Fastboot is a special diagnostic and engineering protocol that users can boot their Android device into.
+        \item The devices with unlockable bootloaders typically support the fastboot mode.
+        \item The fastboot mode can be used to unlock the bootloader on devices.
+        \item After unlocking bootloader, the "su" binary can be installed using custom system image, custom boot image, or a different recovery image.
+    \end{itemize}
+\end{frame}
+
+\subsection{Privileged ADB}
+\begin{frame}{Privileged ADB}
+    \begin{itemize}
+        \item The user id under which the ADB shell runs on the device depends on the value of system property ro.secure.
+        \item If ro.secure is 0, then the shell will run as root, otherwise, if ro.secure is set to 1 (secure mode), it will run as a regular non-privileged user.
+    \end{itemize}
+\end{frame}
+
+\subsection{Rooting apps and PC tools}
+\begin{frame}{Rooting apps and PC tools}
+    \begin{itemize}
+        \item This method is most useful for the devices which do not have an unlockable bootloader.
+        \item On such devices, root access can be obtained by exploiting a system or kernel vulnerability.
+        \item With an adb root shell, one can easily upload su and its installation script to the device and execute it from there to get root access.
+    \end{itemize}
+\end{frame}
+
+\section{Various Rooting Detection Methods}
+\begin{frame}{Study of Various Rooting Methods}
+    \begin{itemize}
+        \item Due to the increasing number of rooted phones whether user-done or malicious, many third-party app developers have started putting various rooting detection methods in their apps so that the app will not function whenever it detects that the phone is rooted.
+    \end{itemize}
+\end{frame}
+
+\subsection{Detect Root Management Packages}
+\begin{frame}{Detect Root Management Packages}
+    \begin{itemize}
+        \item Some applications are commonly installed when the device is rooted. Most common one is SuperSU.apk.
+        \item Other examples can be Titanium Backup, Root Cloakers, Appearance changer applications etc.
+        \item The presence of these apps and packages can be considered a signal that the device is rooted.
+    \end{itemize}
+\end{frame}
+
+\subsection{Other Methods}
+\begin{frame}{Other Methods}
+    \begin{itemize}
+        \item Check for Installed files
+        \item Directory Permissions
+        \item Using Shell Commands
+    \end{itemize}
+\end{frame}
+
+\section{Conclusion \& Future Work}
+\begin{frame}[allowframebreaks]{Conclusion \& Future Work}
+    \begin{itemize}
+        \item Various rooting methods and rooting detection techniques have been analyzed, and the familiarity with the internals of the Android security model gained which will help in further writing Drozer modules to attack this model as next step in the project.
+        \item We plan to use Drozer, a security testing framework for Android; to test the Android security model and some of the publicly available exploits. 
+        \item We also plan to contribute any possible improvements to the codebase of Drozer and implement some Drozer modules to implement and test what we have studied in this semester.
+    \end{itemize}
+\end{frame}
+
+\section{References}
+\begin{frame}[label=references,noframenumbering,plain]{References}
+    \bibliographystyle{ieeetr}
+    \bibliography{ref.bib}
+    \nocite{*}
+\end{frame}
+
+\section*{Thank You}
+\begin{frame}[noframenumbering,plain]
+    \centering \Huge
+    \emph{\textbf{Thank You}}
+\end{frame}
+
+
+\end{document}
